@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="FmodPcmStream" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Streams live PCM through an FMOD Studio programmer instrument.
+	</brief_description>
+	<description>
+		Use one stream for each sound source. Godot pushes PCM on its main thread. FMOD reads it from a fixed native buffer. Studio controls routing, spatialization, effects, and volume.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="clear">
+			<return type="void" />
+			<description>Removes queued PCM and returns to buffering.</description>
+		</method>
+		<method name="get_last_error" qualifiers="const">
+			<return type="String" />
+			<description>Returns the latest setup or playback error.</description>
+		</method>
+		<method name="get_overflow_count" qualifiers="const">
+			<return type="int" />
+			<description>Returns the number of old frames removed to make space.</description>
+		</method>
+		<method name="get_queued_frames" qualifiers="const">
+			<return type="int" />
+			<description>Returns the number of PCM frames waiting for FMOD.</description>
+		</method>
+		<method name="get_rebuffer_count" qualifiers="const">
+			<return type="int" />
+			<description>Returns how many times playback returned to buffering.</description>
+		</method>
+		<method name="get_underrun_count" qualifiers="const">
+			<return type="int" />
+			<description>Returns how many audio reads did not have enough PCM.</description>
+		</method>
+		<method name="initialize">
+			<return type="bool" />
+			<param index="0" name="event_description" type="FmodEventDescription" />
+			<param index="1" name="sample_rate" type="int" default="48000" />
+			<param index="2" name="channels" type="int" default="1" />
+			<param index="3" name="capacity_ms" type="int" default="500" />
+			<param index="4" name="start_threshold_ms" type="int" default="150" />
+			<param index="5" name="decode_buffer_ms" type="int" default="20" />
+			<description>Creates the PCM sound and Studio event. The event must contain a looping asynchronous programmer instrument. The stream accepts one or two channels.</description>
+		</method>
+		<method name="is_buffering" qualifiers="const">
+			<return type="bool" />
+			<description>Returns whether the stream is waiting for its start threshold.</description>
+		</method>
+		<method name="is_started" qualifiers="const">
+			<return type="bool" />
+			<description>Returns whether the Studio event was started.</description>
+		</method>
+		<method name="is_valid" qualifiers="const">
+			<return type="bool" />
+			<description>Returns whether the stream owns a valid Studio event.</description>
+		</method>
+		<method name="push_pcm">
+			<return type="int" />
+			<param index="0" name="pcm" type="PackedFloat32Array" />
+			<description>Queues PCM and returns the number of frames added. Stereo samples must alternate between left and right.</description>
+		</method>
+		<method name="set_3d_attributes" qualifiers="const">
+			<return type="void" />
+			<param index="0" name="transform" type="Transform3D" />
+			<description>Sets the Studio event position.</description>
+		</method>
+		<method name="set_distance_scale">
+			<return type="void" />
+			<param index="0" name="scale" type="float" />
+			<description>Sets the scale used when converting Godot positions to FMOD positions.</description>
+		</method>
+		<method name="set_node_attributes" qualifiers="const">
+			<return type="void" />
+			<param index="0" name="node" type="Node" />
+			<description>Copies a Node2D or Node3D position to the Studio event.</description>
+		</method>
+		<method name="start">
+			<return type="bool" />
+			<description>Starts the Studio event.</description>
+		</method>
+		<method name="stop">
+			<return type="void" />
+			<param index="0" name="allow_fade_out" type="bool" default="false" />
+			<description>Stops and releases the Studio event.</description>
+		</method>
+	</methods>
+	<members>
+		<member name="buffering" type="bool" setter="" getter="is_buffering">Whether the stream is waiting for more PCM.</member>
+		<member name="last_error" type="String" setter="" getter="get_last_error">Latest setup or playback error.</member>
+		<member name="queued_frames" type="int" setter="" getter="get_queued_frames">PCM frames waiting for FMOD.</member>
+		<member name="started" type="bool" setter="" getter="is_started">Whether the Studio event was started.</member>
+	</members>
+</class>

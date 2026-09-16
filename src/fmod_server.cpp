@@ -164,6 +164,10 @@ FmodServer* FmodServer::get_singleton() {
     return singleton;
 }
 
+FMOD::System* FmodServer::get_core_system() const {
+    return coreSystem;
+}
+
 void FmodServer::init(const Ref<FmodGeneralSettings>& p_settings) {
     if (isInitialized) {
         GODOT_LOG_WARNING("Fmod system already initialized.")
