@@ -1,4 +1,5 @@
 #include "constants.h"
+#include "core/fmod_pcm_stream.h"
 #include "core/fmod_sound.h"
 #include "data/performance_data.h"
 #include "fmod_server.h"
@@ -77,6 +78,7 @@ void initialize_fmod_module(ModuleInitializationLevel p_level) {
 
         // Core
         ClassDB::register_class<FmodSound>();
+        ClassDB::register_class<FmodPcmStream>();
         ClassDB::register_class<FmodFile>();
         ClassDB::register_class<FmodChannelGroup>();
 

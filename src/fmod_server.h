@@ -124,6 +124,7 @@ namespace godot {
         ~FmodServer() override;
 
         static FmodServer* get_singleton();
+        FMOD::System* get_core_system() const;
 
         // LIFECYCLE
         void init(const Ref<FmodGeneralSettings>& p_settings);

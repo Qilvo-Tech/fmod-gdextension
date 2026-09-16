@@ -1,0 +1,91 @@
+name: Desktop builds
+
+on:
+  push:
+    branches:
+      - codex/programmer-pcm-stream
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GODOT_VERSION: 4.7.2
+  TARGET_PATH: demo/addons/fmod/libs/
+  TARGET_NAME: libGodotFmod
+  FMOD_VERSION: 20314
+
+jobs:
+  build:
+    name: ${{ matrix.platform }} ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2022
+            platform: windows
+            target: editor
+            additional-python-packages: pywin32
+            fmod-executable-suffix: win-installer.exe
+            shell: pwsh
+          - os: windows-2022
+            platform: windows
+            target: template_debug
+            additional-python-packages: pywin32
+            fmod-executable-suffix: win-installer.exe
+            shell: pwsh
+          - os: windows-2022
+            platform: windows
+            target: template_release
+            additional-python-packages: pywin32
+            fmod-executable-suffix: win-installer.exe
+            shell: pwsh
+          - os: ubuntu-22.04
+            platform: linux
+            target: editor
+            fmod-executable-suffix: linux.tar.gz
+            shell: bash
+          - os: ubuntu-22.04
+            platform: linux
+            target: template_debug
+            fmod-executable-suffix: linux.tar.gz
+            shell: bash
+          - os: ubuntu-22.04
+            platform: linux
+            target: template_release
+            fmod-executable-suffix: linux.tar.gz
+            shell: bash
+          - os: macos-14
+            platform: macos
+            target: editor
+            fmod-executable-suffix: osx.dmg
+            shell: bash
+          - os: macos-14
+            platform: macos
+            target: template_debug
+            fmod-executable-suffix: osx.dmg
+            shell: bash
+          - os: macos-14
+            platform: macos
+            target: template_release
+            fmod-executable-suffix: osx.dmg
+            shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: recursive
+
+      - name: Compile native plugin
+        uses: ./.github/actions/create-native-build
+        with:
+          platform: ${{ matrix.platform }}
+          target: ${{ matrix.target }}
+          additional-python-packages: ${{ matrix.additional-python-packages }}
+          fmod-executable-suffix: ${{ matrix.fmod-executable-suffix }}
+          fmod-user: ${{ secrets.FMODUSER }}
+          fmod-password: ${{ secrets.FMODPASS }}
+          shell: ${{ matrix.shell }}

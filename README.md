@@ -43,6 +43,25 @@ Feel free to raise pull requests. We hope you'll enjoy this addon!
 This GDExtension exposes most of the Studio API functions to Godot's GDScript and also provides helpers for performing
 common functions like attaching Studio events to Godot nodes and playing 3D/positional audio.
 
+## Streaming PCM through Studio
+
+`FmodPcmStream` sends live floating-point PCM through an FMOD Studio event. The
+event must contain a looping asynchronous programmer instrument. Studio still controls routing,
+spatialization, effects, and volume.
+
+```gdscript
+var stream := FmodPcmStream.new()
+if stream.initialize(event_description, 48000, 1):
+    stream.set_node_attributes(source_node)
+    stream.start()
+    stream.push_pcm(samples)
+```
+
+Use one stream for each independent sound source. `push_pcm()` runs on Godot's
+main thread. FMOD reads from a fixed native buffer on its audio thread. Call
+`stop()` when the source ends. Releasing the last reference also stops the event
+and releases its native data.
+
 > **Note:** This plugin doesn't provide C# bindings to FMOD. There is technically a C# FMOD API but we choose to develop it as a C++ GDExtension. Any language binding with a auto-binding feature for extensions should be able to use this plugin, which is the case for GDScript. C# doesn't offer this feature yet.
 
 ## Continuous Delivery
