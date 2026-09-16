@@ -42,11 +42,14 @@ runs:
     - name: Installing FMOD on Windows
       shell: ${{ inputs.shell }}
       if: runner.os == 'Windows'
+      env:
+        FMOD_DOWNLOAD_USER: ${{ inputs.fmod-user }}
+        FMOD_DOWNLOAD_PASSWORD: ${{ inputs.fmod-password }}
       run: |
         cd ..
         New-Item -ItemType directory -Path libs; cd libs
         New-Item -ItemType directory -Path fmod; cd fmod
-        python ../../fmod-gdextension/get_fmod.py ${{inputs.fmod-user}} ${{inputs.fmod-password}} ${{inputs.platform}} ${{env.FMOD_VERSION}}
+        python ../../fmod-gdextension/get_fmod.py "$env:FMOD_DOWNLOAD_USER" "$env:FMOD_DOWNLOAD_PASSWORD" ${{inputs.platform}} ${{env.FMOD_VERSION}}
         7z x fmodstudioapi${{env.FMOD_VERSION}}${{inputs.fmod-executable-suffix}}
         ls
         mv api/ windows
@@ -55,11 +58,14 @@ runs:
     - name: Installing FMOD on Linux & Android
       if: runner.os == 'Linux'
       shell: ${{ inputs.shell }}
+      env:
+        FMOD_DOWNLOAD_USER: ${{ inputs.fmod-user }}
+        FMOD_DOWNLOAD_PASSWORD: ${{ inputs.fmod-password }}
       run: |
         cd ..
         mkdir libs && cd libs
         mkdir fmod && cd fmod
-        python ../../fmod-gdextension/get_fmod.py ${{inputs.fmod-user}} ${{inputs.fmod-password}} ${{inputs.platform}} ${{env.FMOD_VERSION}}
+        python ../../fmod-gdextension/get_fmod.py "$FMOD_DOWNLOAD_USER" "$FMOD_DOWNLOAD_PASSWORD" ${{inputs.platform}} ${{env.FMOD_VERSION}}
         tar -xvf fmodstudioapi${{env.FMOD_VERSION}}${{inputs.fmod-executable-suffix}}
         mv fmodstudioapi${{env.FMOD_VERSION}}${{inputs.platform}}/api ${{inputs.platform}}
         cd ../../
@@ -67,11 +73,14 @@ runs:
     - name: Installing FMOD on MacOS & iOS
       if: runner.os == 'MacOS'
       shell: ${{ inputs.shell }}
+      env:
+        FMOD_DOWNLOAD_USER: ${{ inputs.fmod-user }}
+        FMOD_DOWNLOAD_PASSWORD: ${{ inputs.fmod-password }}
       run: |
         cd ..
         mkdir libs && cd libs
         mkdir fmod && cd fmod
-        python ../../fmod-gdextension/get_fmod.py ${{inputs.fmod-user}} ${{inputs.fmod-password}} ${{inputs.platform}} ${{env.FMOD_VERSION}}
+        python ../../fmod-gdextension/get_fmod.py "$FMOD_DOWNLOAD_USER" "$FMOD_DOWNLOAD_PASSWORD" ${{inputs.platform}} ${{env.FMOD_VERSION}}
         hdiutil attach fmodstudioapi${{env.FMOD_VERSION}}${{inputs.fmod-executable-suffix}}
         [[ ${{inputs.platform}} = "macos" ]] && cp -r "/Volumes/FMOD Programmers API Mac/FMOD Programmers API/api" osx
         [[ ${{inputs.platform}} = "ios" ]] && cp -r "/Volumes/FMOD Programmers API iOS/FMOD Programmers API/api" ios
