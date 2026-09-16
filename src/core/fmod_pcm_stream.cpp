@@ -52,7 +52,7 @@ void FmodPcmStream::_bind_methods() {
       DEFVAL(1),
       DEFVAL(500),
       DEFVAL(150),
-      DEFVAL(20)
+      DEFVAL(100)
     );
     ClassDB::bind_method(D_METHOD("start"), &FmodPcmStream::start);
     ClassDB::bind_method(D_METHOD("stop", "allow_fade_out"), &FmodPcmStream::stop, DEFVAL(false));
@@ -126,7 +126,11 @@ bool FmodPcmStream::initialize(const Ref<FmodEventDescription>& event_descriptio
     sound_info.defaultfrequency = sample_rate;
     sound_info.decodebuffersize = static_cast<unsigned int>(std::max(1, sample_rate * decode_buffer_ms / 1000));
     sound_info.format = FMOD_SOUND_FORMAT_PCMFLOAT;
-    sound_info.length = static_cast<unsigned int>(sample_rate * channels * sizeof(float));
+    // OPENUSER requires a finite length. One hour keeps its loop outside a
+    // normal voice session without approaching the 32-bit byte limit.
+    sound_info.length = static_cast<unsigned int>(
+      static_cast<uint64_t>(sample_rate) * static_cast<uint64_t>(channels) * sizeof(float) * 60 * 60
+    );
     sound_info.pcmreadcallback = pcm_read_callback;
     sound_info.userdata = new_state;
 
